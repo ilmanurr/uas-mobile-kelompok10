@@ -1,4 +1,6 @@
+import 'package:apk_keuangan/pages/login_page.dart';
 import 'package:apk_keuangan/pages/main_page.dart';
+import 'package:apk_keuangan/pages/welcome_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +14,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MainPage(),
+      debugShowCheckedModeBanner: false,
+      home: WelcomePage(),
       theme: ThemeData(primarySwatch: Colors.green),
     );
   }

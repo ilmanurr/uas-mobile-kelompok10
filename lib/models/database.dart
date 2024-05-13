@@ -66,6 +66,20 @@ class AppDb extends _$AppDb {
   Future deleteTransactionRepo(int id) async {
     return (delete(transactions)..where((tbl) => tbl.id.equals(id))).go();
   }
+
+  Stream<List<TransactionWithCategory>> get transactionsWithCategories {
+    final query = select(transactions).join([
+      innerJoin(categories, categories.id.equalsExp(transactions.category_id)),
+    ]);
+    return query.watch().map((rows) {
+      return rows.map((row) {
+        return TransactionWithCategory(
+          row.readTable(transactions),
+          row.readTable(categories),
+        );
+      }).toList();
+    });
+  }
 }
 
 LazyDatabase _openConnection() {

@@ -159,10 +159,10 @@ class _TransactionPageState extends State<TransactionPage> {
                                 }),
                           );
                         } else {
-                          return Center(child: Text('No has data'));
+                          return Center(child: Text('Belum ada data'));
                         }
                       } else {
-                        return Center(child: Text('No has data'));
+                        return Center(child: Text('Belum ada data'));
                       }
                     }
                   }),
@@ -218,11 +218,13 @@ class _TransactionPageState extends State<TransactionPage> {
                 },
                 child: Text(
                   'Save',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    letterSpacing: 2,),
                 ),
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.green)),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[900]),
               ))
             ],
           ),

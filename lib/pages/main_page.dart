@@ -59,18 +59,7 @@ class _MainPageState extends State<MainPage> {
               firstDate: DateTime.now().subtract(Duration(days: 140)),
               lastDate: DateTime.now(),
             )
-          : PreferredSize(
-              preferredSize: Size.fromHeight(100),
-              child: Container(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 36, horizontal: 16),
-                  child: Text(
-                    'Categories',
-                    style: TextStyle(fontSize: 25),
-                  ),
-                ),
-              )),
+          : null,
       body: _children[currentIndex],
       floatingActionButton: Visibility(
         visible: (currentIndex == 0) ? true : false,
@@ -121,7 +110,7 @@ class _MainPageState extends State<MainPage> {
                 onPressed: () {
                   updateView(3, null);
                 },
-                icon: Icon(Icons.person))
+                icon: Icon(Icons.logout))
           ],
         ),
       ),

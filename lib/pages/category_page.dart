@@ -17,20 +17,21 @@ class _CategoryPageState extends State<CategoryPage> {
 
   Future insert(String name, int type) async {
     DateTime now = DateTime.now();
-    final row = await database.into(database.categories).insertReturning(CategoriesCompanion.insert(
-        name: name, type: type, createdAt: now, updatedAt: now));
+    final row = await database.into(database.categories).insertReturning(
+        CategoriesCompanion.insert(
+            name: name, type: type, createdAt: now, updatedAt: now));
     print('MASUK :' + row.toString());
   }
 
   Future<List<Category>> getAllCategory(int type) async {
     return await database.getAllCategoryRepo(type);
   }
-  
+
   Future update(int categoryId, String newName) async {
     return await database.updateCategoryRepo(categoryId, newName);
   }
 
-  void openDialogBox(Category ? category) {
+  void openDialogBox(Category? category) {
     if (category != null) {
       categoryNameController.text = category.name;
     }
@@ -58,19 +59,31 @@ class _CategoryPageState extends State<CategoryPage> {
                           border: OutlineInputBorder(), hintText: "Name"),
                     ),
                     SizedBox(
-                      height: 10,
+                      height: 20,
                     ),
-                    ElevatedButton(onPressed: () {
-                      if (category == null) {
-                        insert(categoryNameController.text, isExpense ? 2 : 1);
-                      } else {
-                        update(category.id, categoryNameController.text);
-                      }
-                      Navigator.of(context, rootNavigator: true).pop('dialog');
-                      setState(() {
-                        categoryNameController.clear();
-                      });
-                    }, child: Text('Save'))
+                    ElevatedButton(
+                        onPressed: () {
+                          if (category == null) {
+                            insert(
+                                categoryNameController.text, isExpense ? 2 : 1);
+                          } else {
+                            update(category.id, categoryNameController.text);
+                          }
+                          Navigator.of(context, rootNavigator: true)
+                              .pop('dialog');
+                          setState(() {
+                            categoryNameController.clear();
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green[900]),
+                        child: Text(
+                          'Save',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            letterSpacing: 2,),
+                        ))
                   ],
                 ),
               ),
@@ -81,110 +94,122 @@ class _CategoryPageState extends State<CategoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Switch(
-                value: isExpense,
-                onChanged: (bool value) {
-                  setState(() {
-                    isExpense = value;
-                    type = value ? 2 : 1;
-                  });
-                },
-                inactiveTrackColor: Colors.green[200],
-                inactiveThumbColor: Colors.green,
-                activeColor: Colors.red,
-              ),
-              IconButton(
-                  onPressed: () {
-                    openDialogBox(null);
-                  },
-                  icon: Icon(Icons.add))
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Center(
+          child: Text(
+            'Categories',
+            style: TextStyle(color: Colors.white),
           ),
         ),
-        FutureBuilder<List<Category>>(
-            future: getAllCategory(type),
-            builder: (context, snapshot){
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            if (snapshot.hasData) {
-              if (snapshot.data!.length > 0) {
-                return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                  return SingleChildScrollView(
-                    child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Card(
-                          elevation: 10,
-                          child: ListTile(
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () {
-                                    database.deleteCategoryRepo(snapshot.data![index].id);
-                                    setState(() {
-
-                                    });
-                                  },
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.edit),
-                                  onPressed: () {
-                                    openDialogBox(snapshot.data![index]);
-                                  },
-                                )
-                              ],
-                            ),
-                            leading: Container(
-                                padding: EdgeInsets.all(3),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: (isExpense)
-                                    ? Icon(Icons.upload,
-                                    color: Colors.redAccent[400])
-                                    : Icon(
-                                  Icons.download,
-                                  color: Colors.greenAccent[400],
-                                )),
-                            title: Text(snapshot.data![index].name),
-                          ),
-                        )
-                    ),
+        backgroundColor: Colors.green,
+        automaticallyImplyLeading: false,
+      ),
+      body: SafeArea(
+          child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Switch(
+                  value: isExpense,
+                  onChanged: (bool value) {
+                    setState(() {
+                      isExpense = value;
+                      type = value ? 2 : 1;
+                    });
+                  },
+                  inactiveTrackColor: Colors.green[200],
+                  inactiveThumbColor: Colors.green,
+                  activeColor: Colors.red,
+                ),
+                IconButton(
+                    onPressed: () {
+                      openDialogBox(null);
+                    },
+                    icon: Icon(Icons.add))
+              ],
+            ),
+          ),
+          FutureBuilder<List<Category>>(
+              future: getAllCategory(type),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
                   );
-                });
-              } else {
-                return Center(
-                  child: Text("No has data"),
-                );
-              }
-            } else {
-              return Center(
-                child: Text("No has data"),
-              );
-            }
-          }
-        }
-        ),
-      ],
-    )
+                } else {
+                  if (snapshot.hasData) {
+                    if (snapshot.data!.length > 0) {
+                      return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            return SingleChildScrollView(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Card(
+                                  elevation: 10,
+                                  child: ListTile(
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(Icons.delete),
+                                          onPressed: () {
+                                            database.deleteCategoryRepo(
+                                                snapshot.data![index].id);
+                                            setState(() {});
+                                          },
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.edit),
+                                          onPressed: () {
+                                            openDialogBox(
+                                                snapshot.data![index]);
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                    leading: Container(
+                                        padding: EdgeInsets.all(3),
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(8)),
+                                        child: (isExpense)
+                                            ? Icon(Icons.upload,
+                                                color: Colors.redAccent[400])
+                                            : Icon(
+                                                Icons.download,
+                                                color: Colors.greenAccent[400],
+                                              )),
+                                    title: Text(snapshot.data![index].name),
+                                  ),
+                                ),
+                              ),
+                            );
+                          });
+                    } else {
+                      return Center(
+                        child: Text("Data kategori masih kosong"),
+                      );
+                    }
+                  } else {
+                    return Center(
+                      child: Text("Data kategori masih kosong"),
+                    );
+                  }
+                }
+              }),
+        ],
+      )),
     );
   }
 }
